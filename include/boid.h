@@ -37,5 +37,6 @@ void cohesion(struct Boid *);
 void fly(struct Boid *);
 void draw_boid(struct UI *, struct Boid *);
 void wrap_around(struct UI *, struct Boid *);
+void avoid_border(struct UI *, struct Boid *);
 
 #endif
