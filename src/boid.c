@@ -1,39 +1,28 @@
 #include "../include/boid.h"
 
 void find_flock(struct Boid **boids, int count, struct Boid *boid) {
-  // Reset values.
-  // flock->mates.clear();
+  free(boid->mates);
+  boid->mates = calloc(0, sizeof(struct Boid *));
   boid->flockSize = 0;
   glm_vec2_zero(boid->flockCenter);
   glm_vec2_zero(boid->flockVel);
-  // flock->center = glm::vec2(0, 0);
-  // flock->vel = glm::vec2(0, 0);
 
   // Get flock mates and info.
   for (int i = 0; i < count; i++) {
     if (boids[i] == boid) {
       continue;
     }
-    // if (glm::length(boids[j]->pos - pos) < vision) {
-    //   flock->mates.push_back(boids[j]);
-    //   flock->center += boids[j]->pos;
-    //   flock->vel += boids[j]->vel;
-    // }
     if (glm_vec2_distance(boids[i]->pos, boid->pos) < boid->vision) {
       boid->flockSize++;
+      boid->mates =
+          realloc(boid->mates, sizeof(struct Boid *) * boid->flockSize);
+      boid->mates[boid->flockSize - 1] = boids[i];
       glm_vec2_add(boid->flockCenter, boids[i]->pos, boid->flockCenter);
       glm_vec2_add(boid->flockVel, boids[i]->vel, boid->flockVel);
     }
   }
 
   // Average collected info over local flock size.
-  // if (flock->mates.size() != 0) {
-  //   flock->center /= flock->mates.size();
-  //   flock->vel /= flock->mates.size();
-  // } else {
-  //   flock->center = this->pos;
-  //   flock->vel = this->vel;
-  // }
   if (boid->flockSize != 0) {
     boid->flockCenter[0] /= boid->flockSize;
     boid->flockCenter[1] /= boid->flockSize;
@@ -44,9 +33,75 @@ void find_flock(struct Boid **boids, int count, struct Boid *boid) {
     glm_vec2(boid->vel, boid->flockVel);
   }
 }
-void align(struct Boid *boid) {
-  // flock->vel = glm::normalize(flock->vel) * maxVel;
-  // glm::vec2 force = flock->vel - vel;
+
+void limit_force(struct Boid *boid, vec2 force) {
+  if (glm_vec2_norm(force) > boid->maxForce) {
+    glm_vec2_mul(force, (vec2){boid->maxForce, boid->maxForce}, force);
+  }
+}
+
+// printf("WD: %f\n", weightedDistance[0]);
+void separation(struct Boid *boid) {
+  vec2 weightedDistance;
+  glm_vec2_zero(weightedDistance);
+  if (boid->flockSize != 0) {
+    for (int i = 0; i < boid->flockSize; i++) {
+      vec2 dist;
+      glm_vec2_sub(boid->pos, boid->mates[i]->pos, dist);
+      if (glm_vec2_norm(dist) != 0) {
+        weightedDistance[0] += dist[0] / glm_vec2_norm(dist);
+        weightedDistance[1] += dist[1] / glm_vec2_norm(dist);
+      }
+    }
+    weightedDistance[0] /= boid->flockSize;
+    weightedDistance[1] /= boid->flockSize;
+  }
+  glm_vec2_norm(weightedDistance);
+  glm_vec2_mul(weightedDistance, (vec2){boid->maxVel, boid->maxVel},
+               weightedDistance);
+  vec2 force;
+  glm_vec2_sub(weightedDistance, boid->vel, force);
+  limit_force(boid, force);
+  glm_vec2_mul(force, (vec2){1.5f, 1.5f}, force);
+  glm_vec2_add(boid->acc, force, boid->acc);
+}
+
+void alignment(struct Boid *boid) {
+  glm_vec2_normalize(boid->flockVel);
+  glm_vec2_mul(boid->flockVel, (vec2){boid->maxVel, boid->maxVel},
+               boid->flockVel);
+
+  vec2 force;
+  glm_vec2_sub(boid->flockVel, boid->vel, force);
+  limit_force(boid, force);
+  // glm_vec2_mul(force, (vec2){0.5f, 0.5f}, force);
+  glm_vec2_add(boid->acc, force, boid->acc);
+}
+
+void cohesion(struct Boid *boid) {
+  vec2 desiredVel;
+  if (boid->flockCenter != boid->pos) {
+    glm_vec2_sub(boid->flockCenter, boid->pos, desiredVel);
+  } else {
+    glm_vec2(boid->vel, desiredVel);
+  }
+
+  glm_vec2_normalize(desiredVel);
+  glm_vec2_mul(desiredVel, (vec2){boid->maxVel, boid->maxVel}, desiredVel);
+
+  vec2 force;
+  glm_vec2_sub(desiredVel, boid->vel, force);
+  limit_force(boid, force);
+  glm_vec2_mul(force, (vec2){0.8f, 0.8f}, force);
+  glm_vec2_add(boid->acc, force, boid->acc);
+  // glm::vec2 desiredVel;
+  // if (flock->center != pos) {
+  //   desiredVel = flock->center - pos;
+  // } else {
+  //   desiredVel = vel;
+  // }
+  // // desiredVel = glm::normalize(desiredVel) * maxVel;
+  // glm::vec2 force = desiredVel - vel;
   //
   // return limitForce(force);
 }
@@ -94,8 +149,14 @@ struct Boid **boids_create(struct UI *ui, int count) {
 }
 
 void fly(struct Boid *boid) {
+  if (glm_vec2_norm(boid->vel) < boid->maxVel) {
+    glm_vec2_normalize(boid->vel);
+    glm_vec2_mul(boid->vel, (vec2){boid->maxVel, boid->maxVel}, boid->vel);
+  }
+
   glm_vec2_add(boid->pos, boid->vel, boid->pos);
   glm_vec2_add(boid->vel, boid->acc, boid->vel);
+  glm_vec2_zero(boid->acc);
 }
 
 struct Boid *boid_create(struct UI *ui) {
@@ -103,25 +164,29 @@ struct Boid *boid_create(struct UI *ui) {
   if (boid == NULL) {
     return NULL;
   }
+  boid->maxForce = 0.05f;
+  boid->maxVel = 4.0f;
+
   boid->pos[0] = rand() % (ui->sizeX + 1);
   boid->pos[1] = rand() % (ui->sizeY + 1);
 
   boid->vel[0] = rand() - RAND_MAX / 2;
   boid->vel[1] = rand() - RAND_MAX / 2;
   glm_vec2_normalize(boid->vel);
+  glm_vec2_mul(boid->vel, (vec2){boid->maxVel, boid->maxVel}, boid->vel);
 
-  boid->acc[0] = 0.0f;
-  boid->acc[1] = 0.0f;
+  glm_vec2((vec2){0, 0}, boid->acc);
+
+  glm_vec2((vec2){0, 0}, boid->flockCenter);
+  glm_vec2((vec2){0, 0}, boid->flockVel);
+  boid->flockSize = 0;
 
   boid->vision = 50.0f;
+
   boid->length = 30.0f;
   boid->width = 20.0f;
 
-  boid->flockCenter[0] = 0;
-  boid->flockCenter[1] = 0;
-  boid->flockVel[0] = 0;
-  boid->flockVel[1] = 0;
-  boid->flockSize = 0;
+  boid->mates = calloc(0, sizeof(struct Boid *));
 
   return boid;
 }

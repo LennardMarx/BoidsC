@@ -25,12 +25,23 @@ int main(int argc, char *argv[]) {
 
     for (int i = 0; i < boidCount; i++) {
       find_flock(boids, boidCount, boids[i]);
+      separation(boids[i]);
+      alignment(boids[i]);
+      cohesion(boids[i]);
       wrap_around(ui, boids[i]);
       fly(boids[i]);
       draw_boid(ui, boids[i]);
     }
 
-    // printf("Flock: %f\n", boids[55]->flockCenter[0]);
+    // if (boids[55]->mates[0] != NULL) {
+    //   printf("Flock: %d,  %f\n", boids[55]->flockSize,
+    //          boids[55]->mates[0]->flockVel[0]);
+    // } else {
+    //   printf("No mates.\n");
+    // }
+
+    // printf("Flock: %f\n", boids[55]->flockVel[0]);
+    // printf("Self: %f\n", boids[55]->vel[0]);
 
     SDL_RenderPresent(ui->renderer);
 
