@@ -1,9 +1,6 @@
 #include "../include/ui.h"
 
 void clear_screen(struct UI *ui) {
-  // SDL_SetRenderDrawColor(ui->renderer, 100, 100, 100, 255);
-  // SDL_RenderClear(ui->renderer);
-  // SDL_SetRenderDrawColor(ui->renderer, 255, 255, 150, 255);
   SDL_SetRenderDrawColor(ui->renderer, 69, 133, 136, 255); // gruv-blue
   SDL_RenderClear(ui->renderer);
   SDL_SetRenderDrawColor(ui->renderer, 249, 245, 215, 150); // gruv-light

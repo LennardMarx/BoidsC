@@ -1,5 +1,6 @@
 #include "../include/boid.h"
 #include "../include/event_handler.h"
+#include "../include/quad_tree.h"
 #include "../include/ui.h"
 #include <stdio.h>
 #include <time.h>
@@ -12,10 +13,20 @@ int main(int argc, char *argv[]) {
   int boidCount = 1000;
   struct Boid **boids = boids_create(ui, boidCount);
 
+  // struct Rectangle rect = {ui->sizeX / 2, ui->sizeY / 2, ui->sizeX,
+  // ui->sizeY};
+  struct QuadTree *quadTree = quad_tree_create(
+      (struct Rectangle){ui->sizeX / 2, ui->sizeY / 2, ui->sizeX, ui->sizeY});
+
   const int FPS = 60;
   const int FRAME_DELAY = 1000 / FPS;
   Uint32 frameStart;
   int frameTime;
+
+  subdivide(quadTree);
+  for (int i = 0; i < 4; i++) {
+    subdivide(quadTree->children[i]);
+  }
 
   while (!eventHandler->quit) {
     frameStart = SDL_GetTicks();
@@ -37,6 +48,7 @@ int main(int argc, char *argv[]) {
     }
     // printf("Self: %f\n", boids[55]->vel[0]);
 
+    quad_tree_draw(quadTree, ui);
     SDL_RenderPresent(ui->renderer);
 
     frameTime = SDL_GetTicks() - frameStart;
@@ -49,6 +61,7 @@ int main(int argc, char *argv[]) {
   ui_destroy(ui);
   event_handler_destroy(eventHandler);
   boids_destroy(boids, boidCount);
+  quad_tree_destroy(quadTree);
 
   SDL_Quit();
 
