@@ -28,7 +28,75 @@ void quad_tree_destroy(struct QuadTree *qt) {
   }
 }
 
-// struct Boid** qu
+bool contains(struct QuadTree *qt, struct Boid *boid) {
+  int left = qt->rect.x - qt->rect.w / 2;
+  int right = qt->rect.x + qt->rect.w / 2;
+  int up = qt->rect.y - qt->rect.h / 2;
+  int down = qt->rect.y + qt->rect.h / 2;
+
+  if (boid->pos[0] >= left && boid->pos[0] < right && boid->pos[1] >= up &&
+      boid->pos[1] < down) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+struct Boid **query(struct QuadTree *qt, struct Boid *boid, int *count) {
+  struct Boid **found = malloc(sizeof(struct Boid *));
+  // int foundCount = 0;
+  *count = 0;
+  int total = 0;
+
+  vec2 pos;
+  glm_vec2(boid->pos, pos);
+  float rad = boid->vision;
+  int left = qt->rect.x - qt->rect.w / 2;
+  int right = qt->rect.x + qt->rect.w / 2;
+  int up = qt->rect.y - qt->rect.h / 2;
+  int down = qt->rect.y + qt->rect.h / 2;
+  if (pos[0] - rad > right || pos[0] + rad < left || pos[1] - rad > down ||
+      pos[1] + rad < up) {
+    free(found);
+    return NULL;
+  } else {
+    for (int i = 0; i < qt->boidCount; i++) {
+      if (contains(qt, qt->boids[i])) {
+        // *count++;
+        *count += 1;
+        found = realloc(found, *count * sizeof(struct Boid *));
+        found[*count - 1] = qt->boids[i];
+      }
+    }
+    if (qt->isDivided) {
+      int count0;
+      struct Boid **found0 = query(qt->children[0], boid, &count0);
+      // printf("Mates: %d\n", count0);
+      int count1;
+      struct Boid **found1 = query(qt->children[1], boid, &count1);
+      int count2;
+      struct Boid **found2 = query(qt->children[2], boid, &count2);
+      int count3;
+      struct Boid **found3 = query(qt->children[3], boid, &count3);
+      total = *count + count0 + count1 + count2 + count3;
+      // total = *count + count0 + count1 + count2;
+      found = realloc(found, total * sizeof(struct Boid *));
+      memcpy(found + *count, found0, count0 * sizeof(struct Boid *));
+      memcpy(found + *count + count0, found1, count1 * sizeof(struct Boid *));
+      memcpy(found + *count + count0 + count1, found2,
+             count2 * sizeof(struct Boid *));
+      memcpy(found + *count + count0 + count1 + count2, found3,
+             count3 * sizeof(struct Boid *));
+      *count = total;
+      free(found0);
+      free(found1);
+      free(found2);
+      free(found3);
+    }
+    return found;
+    free(found);
+  }
+}
 
 // void quad_tree_clear(struct QuadTree *qt) {
 //   // if (qt->children != NULL) {
@@ -50,20 +118,6 @@ void quad_tree_destroy(struct QuadTree *qt) {
 //   qt->isDivided = false;
 //   qt->boidCount = 0;
 // }
-
-bool contains(struct QuadTree *qt, struct Boid *boid) {
-  int left = qt->rect.x - qt->rect.w / 2;
-  int right = qt->rect.x + qt->rect.w / 2;
-  int up = qt->rect.y - qt->rect.h / 2;
-  int down = qt->rect.y + qt->rect.h / 2;
-
-  if (boid->pos[0] >= left && boid->pos[0] < right && boid->pos[1] >= up &&
-      boid->pos[1] < down) {
-    return true;
-  } else {
-    return false;
-  }
-}
 
 void insert(struct QuadTree *qt, struct Boid *boid) {
   if (!contains(qt, boid)) {

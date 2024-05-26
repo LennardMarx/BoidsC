@@ -35,7 +35,28 @@ int main(int argc, char *argv[]) {
 
     for (int i = 0; i < boidCount; i++) {
       insert(quadTree, boids[i]);
-      find_flock(boids, boidCount, boids[i]);
+    }
+
+    for (int i = 0; i < boidCount; i++) {
+      int mateCount;
+      struct Boid **mates = query(quadTree, boids[i], &mateCount);
+      find_flock(mates, mateCount, boids[i]);
+      free(mates);
+
+      // printf("queried: %d\n", mateCount);
+      // if (i == 55) {
+      //   boids[i]->length = 40;
+      //   boids[i]->width = 30;
+      //   draw_boid(ui, boids[i]);
+      //
+      //   for (int j = 0; j < mateCount; j++) {
+      //     draw_boid_red(ui, mates[j]);
+      //   }
+      // }
+
+      // find_flock(boids, boidCount, boids[i]);
+
+      // printf(" brute force: %d\n", boids[i]->flockSize);
 
       separation(boids[i]);
       alignment(boids[i]);
@@ -47,6 +68,12 @@ int main(int argc, char *argv[]) {
       draw_boid(ui, boids[i]);
     }
     // printf("Self: %f\n", boids[55]->vel[0]);
+    boids[55]->width = 40;
+    boids[55]->length = 60;
+    draw_boid_red(ui, boids[55]);
+    for (int i = 0; i < boids[55]->flockSize; i++) {
+      draw_boid_red(ui, boids[55]->mates[i]);
+    }
 
     quad_tree_draw(quadTree, ui);
     SDL_RenderPresent(ui->renderer);
