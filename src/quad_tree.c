@@ -27,26 +27,29 @@ void quad_tree_destroy(struct QuadTree *qt) {
     free(qt);
   }
 }
-void quad_tree_clear(struct QuadTree *qt) {
-  // if (qt->children != NULL) {
-  if (qt == NULL) {
-    return;
-  }
-  if (qt->isDivided) {
-    // printf("IS DIVIDED\n");
-    for (int i = 0; i < 4; i++) {
-      quad_tree_clear(qt->children[i]);
-    }
-    free(qt->children);
-    qt->children = NULL;
-  }
-  if (qt->boids != NULL) {
-    free(qt->boids);
-    qt->boids = NULL;
-  }
-  qt->isDivided = false;
-  qt->boidCount = 0;
-}
+
+// struct Boid** qu
+
+// void quad_tree_clear(struct QuadTree *qt) {
+//   // if (qt->children != NULL) {
+//   if (qt == NULL) {
+//     return;
+//   }
+//   if (qt->isDivided) {
+//     // printf("IS DIVIDED\n");
+//     for (int i = 0; i < 4; i++) {
+//       quad_tree_clear(qt->children[i]);
+//     }
+//     free(qt->children);
+//     qt->children = NULL;
+//   }
+//   if (qt->boids != NULL) {
+//     free(qt->boids);
+//     qt->boids = NULL;
+//   }
+//   qt->isDivided = false;
+//   qt->boidCount = 0;
+// }
 
 bool contains(struct QuadTree *qt, struct Boid *boid) {
   int left = qt->rect.x - qt->rect.w / 2;
@@ -90,7 +93,13 @@ void insert(struct QuadTree *qt, struct Boid *boid) {
 }
 
 void subdivide(struct QuadTree *qt) {
-  qt->children = malloc(sizeof(struct QuadTree *) * 4);
+  // if (qt->children == NULL) {
+  //   qt->children = malloc(4 * sizeof(struct QuadTree *));
+  // }
+  if (qt->children != NULL) {
+    free(qt->children);
+  }
+  qt->children = malloc(4 * sizeof(struct QuadTree *));
   qt->children[0] = quad_tree_create((struct Rectangle){
       qt->rect.x - qt->rect.w / 4, qt->rect.y - qt->rect.h / 4, qt->rect.w / 2,
       qt->rect.h / 2});

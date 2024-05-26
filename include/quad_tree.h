@@ -30,7 +30,7 @@ void insert(struct QuadTree *, struct Boid *);
 bool contains(struct QuadTree *, struct Boid *);
 struct Boid **query(struct QuadTree *, struct Boid *);
 
-void quad_tree_clear(struct QuadTree *);
+// void quad_tree_clear(struct QuadTree *);
 void quad_tree_draw(struct QuadTree *, struct UI *);
 
 #endif
