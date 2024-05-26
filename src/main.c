@@ -23,18 +23,22 @@ int main(int argc, char *argv[]) {
   Uint32 frameStart;
   int frameTime;
 
-  subdivide(quadTree);
-  for (int i = 0; i < 4; i++) {
-    subdivide(quadTree->children[i]);
-  }
-
   while (!eventHandler->quit) {
     frameStart = SDL_GetTicks();
 
     handle_events(eventHandler);
     clear_screen(ui);
 
+    // subdivide(quadTree);
+    // for (int i = 0; i < 4; i++) {
+    //   subdivide(quadTree->children[i]);
+    //   for (int j = 0; j < 4; j++) {
+    //     subdivide(quadTree->children[i]->children[j]);
+    //   }
+    // }
+
     for (int i = 0; i < boidCount; i++) {
+      insert(quadTree, boids[i]);
       find_flock(boids, boidCount, boids[i]);
 
       separation(boids[i]);
@@ -50,6 +54,7 @@ int main(int argc, char *argv[]) {
 
     quad_tree_draw(quadTree, ui);
     SDL_RenderPresent(ui->renderer);
+    quad_tree_clear(quadTree);
 
     frameTime = SDL_GetTicks() - frameStart;
     if (FRAME_DELAY > frameTime) {

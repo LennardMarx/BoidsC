@@ -13,6 +13,7 @@ struct Rectangle {
 struct QuadTree {
   struct QuadTree **children;
   struct Boid **boids;
+  int boidCount;
 
   struct Rectangle rect;
   bool isDivided;
@@ -29,7 +30,7 @@ void insert(struct QuadTree *, struct Boid *);
 bool contains(struct QuadTree *, struct Boid *);
 struct Boid **query(struct QuadTree *, struct Boid *);
 
-void clear(struct QuadTree *);
+void quad_tree_clear(struct QuadTree *);
 void quad_tree_draw(struct QuadTree *, struct UI *);
 
 #endif
