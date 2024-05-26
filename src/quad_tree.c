@@ -17,9 +17,11 @@ void quad_tree_destroy(struct QuadTree *qt) {
       quad_tree_destroy(qt->children[i]);
     }
     free(qt->children);
+    qt->children = NULL;
   }
   if (qt->boids != NULL) {
     free(qt->boids);
+    qt->boids = NULL;
   }
   if (qt != NULL) {
     free(qt);
@@ -27,15 +29,20 @@ void quad_tree_destroy(struct QuadTree *qt) {
 }
 void quad_tree_clear(struct QuadTree *qt) {
   // if (qt->children != NULL) {
+  if (qt == NULL) {
+    return;
+  }
   if (qt->isDivided) {
     // printf("IS DIVIDED\n");
     for (int i = 0; i < 4; i++) {
       quad_tree_clear(qt->children[i]);
     }
     free(qt->children);
+    qt->children = NULL;
   }
   if (qt->boids != NULL) {
     free(qt->boids);
+    qt->boids = NULL;
   }
   qt->isDivided = false;
   qt->boidCount = 0;
@@ -63,14 +70,14 @@ void insert(struct QuadTree *qt, struct Boid *boid) {
     // printf("CONTAINS!\n");
     if (qt->boids == NULL) {
       qt->boidCount++;
-      // qt->boids = malloc(sizeof(struct Boid *));
-      // qt->boids[qt->boidCount - 1] = boid;
+      qt->boids = malloc(sizeof(struct Boid *));
+      qt->boids[qt->boidCount - 1] = boid;
+      // }
+    } else {
+      qt->boidCount++;
+      qt->boids = realloc(qt->boids, sizeof(struct Boid *) * (qt->boidCount));
+      qt->boids[qt->boidCount - 1] = boid;
     }
-    // } else {
-    //   qt->boidCount++;
-    //   qt->boids = realloc(qt->boids, sizeof(struct Boid *) *
-    //   (qt->boidCount)); qt->boids[qt->boidCount - 1] = boid;
-    // }
   } else {
     if (!qt->isDivided) {
       subdivide(qt);
