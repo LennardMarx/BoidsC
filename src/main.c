@@ -1,15 +1,26 @@
 #include "../include/boid.h"
 #include "../include/event_handler.h"
 #include "../include/quad_tree.h"
+#include "../include/textured_rectangle.h"
 #include "../include/ui.h"
 #include <stdio.h>
 #include <time.h>
+#include <unistd.h>
+
+#define PI 3.141592654
 
 int main(int argc, char *argv[]) {
+  if (chdir(SDL_GetBasePath()) != 0) {
+    perror("chdir failed");
+  }
+
   srand(time(NULL));
 
   struct UI *ui = ui_create("Boids", 1600, 1000);
   struct EventHandler *eventHandler = event_handler_create();
+
+  struct TexturedRectangle *texturedRectangle =
+      textured_rectangle_create(ui->renderer, "../resources/duck.bmp");
 
   int boidCount = 2000;
   struct Boid **boids = boids_create(ui, boidCount);
@@ -19,22 +30,21 @@ int main(int argc, char *argv[]) {
   Uint32 frameStart;
   int frameTime;
 
+  vec2 mouse;
   int mouseX, mouseY;
 
   while (!eventHandler->quit) {
     frameStart = SDL_GetTicks();
 
     SDL_GetMouseState(&mouseX, &mouseY);
-    vec2 mouse;
     glm_vec2((vec2){mouseX, mouseY}, mouse);
-
-    // printf("Mouse: %f, %f\n", mouse[0], mouse[1]);
 
     handle_events(eventHandler);
     clear_screen(ui);
 
     struct QuadTree *quadTree = quad_tree_create(
-        (struct Rectangle){ui->sizeX / 2, ui->sizeY / 2, ui->sizeX, ui->sizeY});
+        (struct Rectangle){(float)ui->sizeX / 2, (float)ui->sizeY / 2,
+                           (float)ui->sizeX, (float)ui->sizeY});
 
     for (int i = 0; i < boidCount; i++) {
       insert(quadTree, boids[i]);
@@ -46,21 +56,25 @@ int main(int argc, char *argv[]) {
       find_flock(mates, mateCount, boids[i]);
       free(mates);
 
-      // find_flock(boids, boidCount, boids[i]);
-
       separation(boids[i]);
       alignment(boids[i]);
       cohesion(boids[i]);
 
-      // wrap_around(ui, boids[i]);
       avoid_border(ui, boids[i]);
       avoid_mouse(&mouse, boids[i]);
 
       fly(boids[i]);
-      draw_boid(ui, boids[i]);
+      // draw_boid(ui, boids[i]);
+      textured_rectangle_draw(texturedRectangle, boids[i]->pos[0] - 20,
+                              boids[i]->pos[1] - 10, 40, 20);
+      float angle = -atan2(boids[i]->vel[0], boids[i]->vel[1]) * 180 / PI + 180;
+      // float angle = 20.0f;
+      textured_rectangle_render(texturedRectangle, ui->renderer, &angle);
     }
 
-    // quad_tree_draw(quadTree, ui);
+    if (eventHandler->pause) {
+      quad_tree_draw(quadTree, ui);
+    }
 
     SDL_RenderPresent(ui->renderer);
 
@@ -77,6 +91,7 @@ int main(int argc, char *argv[]) {
   ui_destroy(ui);
   event_handler_destroy(eventHandler);
   boids_destroy(boids, boidCount);
+  textured_rectangle_destroy(texturedRectangle);
 
   SDL_Quit();
 

@@ -2,13 +2,11 @@
 #define QUAD_TREE_H
 
 #include "../include/boid.h"
+#include "../include/rectangle.h"
 #include "../include/ui.h"
 #include <SDL2/SDL.h>
+#include <math.h>
 #include <stdlib.h>
-
-struct Rectangle {
-  int x, y, w, h;
-};
 
 struct QuadTree {
   struct QuadTree **children;

@@ -98,27 +98,6 @@ struct Boid **query(struct QuadTree *qt, struct Boid *boid, int *count) {
   }
 }
 
-// void quad_tree_clear(struct QuadTree *qt) {
-//   // if (qt->children != NULL) {
-//   if (qt == NULL) {
-//     return;
-//   }
-//   if (qt->isDivided) {
-//     // printf("IS DIVIDED\n");
-//     for (int i = 0; i < 4; i++) {
-//       quad_tree_clear(qt->children[i]);
-//     }
-//     free(qt->children);
-//     qt->children = NULL;
-//   }
-//   if (qt->boids != NULL) {
-//     free(qt->boids);
-//     qt->boids = NULL;
-//   }
-//   qt->isDivided = false;
-//   qt->boidCount = 0;
-// }
-
 void insert(struct QuadTree *qt, struct Boid *boid) {
   if (!contains(qt, boid)) {
     return;
@@ -147,9 +126,6 @@ void insert(struct QuadTree *qt, struct Boid *boid) {
 }
 
 void subdivide(struct QuadTree *qt) {
-  // if (qt->children == NULL) {
-  //   qt->children = malloc(4 * sizeof(struct QuadTree *));
-  // }
   if (qt->children != NULL) {
     free(qt->children);
   }
@@ -170,21 +146,20 @@ void subdivide(struct QuadTree *qt) {
 }
 
 void quad_tree_draw(struct QuadTree *qt, struct UI *ui) {
-  // SDL_SetRenderDrawColor(ui->getRenderer(), 249, 245, 215, 50); //
-  // grub-light
-  SDL_RenderDrawLine(ui->renderer, qt->rect.x - qt->rect.w / 2,
-                     qt->rect.y - qt->rect.h / 2, qt->rect.x + qt->rect.w / 2,
-                     qt->rect.y - qt->rect.h / 2);
-  SDL_RenderDrawLine(ui->renderer, qt->rect.x - qt->rect.w / 2,
-                     qt->rect.y - qt->rect.h / 2, qt->rect.x - qt->rect.w / 2,
-                     qt->rect.y + qt->rect.h / 2);
-  SDL_RenderDrawLine(ui->renderer, qt->rect.x + qt->rect.w / 2,
-                     qt->rect.y - qt->rect.h / 2, qt->rect.x + qt->rect.w / 2,
-                     qt->rect.y + qt->rect.h / 2);
-  SDL_RenderDrawLine(ui->renderer, qt->rect.x - qt->rect.w / 2,
-                     qt->rect.y + qt->rect.h / 2, qt->rect.x + qt->rect.w / 2,
-                     qt->rect.y + qt->rect.h / 2);
-  if (qt->children != NULL) {
+  if (qt->children == NULL) {
+    SDL_RenderDrawLine(ui->renderer, qt->rect.x - qt->rect.w / 2,
+                       qt->rect.y - qt->rect.h / 2, qt->rect.x + qt->rect.w / 2,
+                       qt->rect.y - qt->rect.h / 2);
+    SDL_RenderDrawLine(ui->renderer, qt->rect.x - qt->rect.w / 2,
+                       qt->rect.y - qt->rect.h / 2, qt->rect.x - qt->rect.w / 2,
+                       qt->rect.y + qt->rect.h / 2);
+    SDL_RenderDrawLine(ui->renderer, qt->rect.x + qt->rect.w / 2,
+                       qt->rect.y - qt->rect.h / 2, qt->rect.x + qt->rect.w / 2,
+                       qt->rect.y + qt->rect.h / 2);
+    SDL_RenderDrawLine(ui->renderer, qt->rect.x - qt->rect.w / 2,
+                       qt->rect.y + qt->rect.h / 2, qt->rect.x + qt->rect.w / 2,
+                       qt->rect.y + qt->rect.h / 2);
+  } else if (qt->children != NULL) {
     for (int i = 0; i < 4; i++) {
       quad_tree_draw(qt->children[i], ui);
     }

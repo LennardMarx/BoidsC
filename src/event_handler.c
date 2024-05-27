@@ -3,6 +3,7 @@
 struct EventHandler *event_handler_create(void) {
   struct EventHandler *eh = malloc(sizeof(struct EventHandler));
   eh->quit = 0;
+  eh->pause = 0;
   return eh;
 }
 
@@ -20,6 +21,9 @@ void handle_events(struct EventHandler *eh) {
         break;
       case SDLK_q:
         eh->quit = 1;
+        break;
+      case SDLK_SPACE:
+        eh->pause = !eh->pause;
         break;
       default:
         break;

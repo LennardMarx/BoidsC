@@ -112,7 +112,8 @@ void avoid_mouse(vec2 *mouse, struct Boid *boid) {
     glm_vec2(boid->vel, desiredVel);
   }
   glm_vec2_normalize(desiredVel);
-  glm_vec2_mul(desiredVel, (vec2){boid->maxVel, boid->maxVel}, desiredVel);
+  // glm_vec2_mul(desiredVel, (vec2){boid->maxVel, boid->maxVel}, desiredVel);
+  glm_vec2_mul(desiredVel, (vec2){8.0f, 8.0f}, desiredVel);
 
   vec2 force;
   glm_vec2_sub(desiredVel, boid->vel, force);
