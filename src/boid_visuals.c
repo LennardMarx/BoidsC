@@ -45,3 +45,12 @@ void draw_boid_red(struct UI *ui, struct Boid *boid) {
                      boid->pos[1] + dir[1] * boid->length);
   SDL_SetRenderDrawColor(ui->renderer, 249, 245, 215, 150); // gruv-light
 }
+
+void boid_continue_animation(struct Boid *boid, int *frameCount) {
+  if (*frameCount % 4 == 0) {
+    boid->animationFrame++;
+  }
+  if (boid->animationFrame >= 12) {
+    boid->animationFrame = 0;
+  }
+}

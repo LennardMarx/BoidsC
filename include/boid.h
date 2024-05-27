@@ -21,6 +21,8 @@ struct Boid {
 
   float maxVel;
   float maxForce;
+
+  int animationFrame;
 };
 
 struct Boid *boid_create(struct UI *);
@@ -41,5 +43,7 @@ void draw_boid_red(struct UI *, struct Boid *);
 void wrap_around(struct UI *, struct Boid *);
 void avoid_border(struct UI *, struct Boid *);
 void avoid_mouse(vec2 *, struct Boid *);
+
+void boid_continue_animation(struct Boid *, int *);
 
 #endif
