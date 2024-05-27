@@ -102,3 +102,21 @@ void wrap_around(struct UI *ui, struct Boid *boid) {
     boid->pos[1] = 0.0f;
   }
 }
+
+void avoid_mouse(vec2 *mouse, struct Boid *boid) {
+  vec2 desiredVel;
+  if (glm_vec2_distance(*mouse, boid->pos) != 0 &&
+      glm_vec2_distance(*mouse, boid->pos) < 300.0f) {
+    glm_vec2_sub(boid->pos, *mouse, desiredVel);
+  } else {
+    glm_vec2(boid->vel, desiredVel);
+  }
+  glm_vec2_normalize(desiredVel);
+  glm_vec2_mul(desiredVel, (vec2){boid->maxVel, boid->maxVel}, desiredVel);
+
+  vec2 force;
+  glm_vec2_sub(desiredVel, boid->vel, force);
+  limit_force(boid, force);
+  glm_vec2_mul(force, (vec2){3.0f, 3.0f}, force);
+  glm_vec2_add(boid->acc, force, boid->acc);
+}

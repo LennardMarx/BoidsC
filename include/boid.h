@@ -37,7 +37,9 @@ void find_flock(struct Boid **, int, struct Boid *);
 void fly(struct Boid *);
 void draw_boid(struct UI *, struct Boid *);
 void draw_boid_red(struct UI *, struct Boid *);
+
 void wrap_around(struct UI *, struct Boid *);
 void avoid_border(struct UI *, struct Boid *);
+void avoid_mouse(vec2 *, struct Boid *);
 
 #endif
