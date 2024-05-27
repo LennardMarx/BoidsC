@@ -3,7 +3,7 @@
 void clear_screen(struct UI *ui) {
   SDL_SetRenderDrawColor(ui->renderer, 69, 133, 136, 255); // gruv-blue
   SDL_RenderClear(ui->renderer);
-  SDL_SetRenderDrawColor(ui->renderer, 249, 245, 215, 250); // gruv-light
+  SDL_SetRenderDrawColor(ui->renderer, 249, 245, 215, 100); // gruv-light
 }
 
 struct UI *ui_create(char *windowName, int width, int height) {

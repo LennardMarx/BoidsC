@@ -4,6 +4,7 @@ struct EventHandler *event_handler_create(void) {
   struct EventHandler *eh = malloc(sizeof(struct EventHandler));
   eh->quit = 0;
   eh->pause = 0;
+  eh->click = 0;
   return eh;
 }
 
@@ -14,6 +15,16 @@ void handle_events(struct EventHandler *eh) {
       eh->quit = 1;
     }
     switch (eh->event.type) {
+    case SDL_MOUSEBUTTONDOWN:
+      eh->click = 1;
+      // printf("CLICK\n");
+      eh->pause = !eh->pause;
+      eh->click = 0;
+      break;
+    case SDL_MOUSEBUTTONUP:
+      // if (eh->event.button.clicks == SDL_BUTTON_LEFT)
+      eh->click = 0;
+      break;
     case SDL_KEYDOWN:
       switch (eh->event.key.keysym.sym) {
       case SDLK_ESCAPE:

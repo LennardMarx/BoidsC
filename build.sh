@@ -19,8 +19,8 @@ OBJ_DIR="obj"
 BIN_DIR="bin"
 
 for file in $SRC_DIR/*.c; do
-    gcc -c "$file" -O2 -o "$OBJ_DIR/$(basename "${file%.c}.o")"
+    gcc -c "$file" -O3 -o "$OBJ_DIR/$(basename "${file%.c}.o")"
 done
 
 # Link object files to create the final executable
-gcc $OBJ_DIR/*.o -lm -lSDL2 -Wall -Werror -Wextra -O2 -o $BIN_DIR/boids
+gcc $OBJ_DIR/*.o -lm -lSDL2 -Wall -Werror -Wextra -O3 -o $BIN_DIR/boids
