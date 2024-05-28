@@ -41,18 +41,13 @@ int main(int argc, char *argv[]) {
     SDL_GetMouseState(&mouseX, &mouseY);
     glm_vec2((vec2){mouseX, mouseY}, mouse);
 
-    handle_events(eventHandler);
+    handle_events(eventHandler, ui, &mouse);
 
     clear_screen(ui);
 
     struct QuadTree *quadTree = quad_tree_create(
         (struct Rectangle){(float)ui->sizeX / 2, (float)ui->sizeY / 2,
                            (float)ui->sizeX, (float)ui->sizeY});
-
-    // if (eventHandler->click == 1) {
-    //   eventHandler->pause = !eventHandler->pause;
-    //   eventHandler->click = 0;
-    // }
 
     for (int i = 0; i < boidCount; i++) {
       insert(quadTree, boids[i]);
@@ -80,12 +75,11 @@ int main(int argc, char *argv[]) {
       animated_sprite_play_frame(animatedSprite, 0, 0, 135, 65,
                                  boids[i]->animationFrame);
       float angle = -atan2(boids[i]->vel[0], boids[i]->vel[1]) * 180 / PI + 180;
-      if (!eventHandler->pause)
-        animated_sprite_render(animatedSprite, ui->renderer, &angle);
+      // if (!eventHandler->pause)
+      animated_sprite_render(animatedSprite, ui->renderer, &angle);
     }
 
-    if (eventHandler->pause) {
-      // if (quadTree->isVisible) {
+    if (eventHandler->showQuadTree) {
       quad_tree_draw(quadTree, ui);
     }
 

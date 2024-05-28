@@ -5,10 +5,11 @@ struct EventHandler *event_handler_create(void) {
   eh->quit = 0;
   eh->pause = 0;
   eh->click = 0;
+  eh->showQuadTree = 0;
   return eh;
 }
 
-void handle_events(struct EventHandler *eh) {
+void handle_events(struct EventHandler *eh, struct UI *ui, vec2 *mouse) {
   while (SDL_PollEvent(&eh->event) != 0) {
     // User requests quit
     if (eh->event.type == SDL_QUIT) {
@@ -16,15 +17,11 @@ void handle_events(struct EventHandler *eh) {
     }
     switch (eh->event.type) {
     case SDL_MOUSEBUTTONDOWN:
-      eh->click = 1;
-      // printf("CLICK\n");
-      eh->pause = !eh->pause;
-      eh->click = 0;
+      if ((*mouse)[0] > ui->sizeX - 400 && (*mouse)[1] < 300)
+        eh->showQuadTree = !eh->showQuadTree;
       break;
-    case SDL_MOUSEBUTTONUP:
-      // if (eh->event.button.clicks == SDL_BUTTON_LEFT)
-      eh->click = 0;
-      break;
+    // case SDL_MOUSEBUTTONUP:
+    //   break;
     case SDL_KEYDOWN:
       switch (eh->event.key.keysym.sym) {
       case SDLK_ESCAPE:

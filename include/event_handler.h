@@ -11,11 +11,12 @@ struct EventHandler {
   int quit;
   bool pause;
   bool click;
+  bool showQuadTree;
 };
 
 struct EventHandler *event_handler_create(void);
 void event_handler_destroy(struct EventHandler *);
 
-void handle_events(struct EventHandler *);
+void handle_events(struct EventHandler *, struct UI *, vec2 *);
 
 #endif
