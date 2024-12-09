@@ -46,6 +46,15 @@ static void mainloop(void *arg) {
 
 // printf("frameCount: %d\n", ctx->frameCount);
 #ifdef __EMSCRIPTEN__
+  // get canvas size on frame 0
+  if (ctx->frameCount == 0) {
+    int canvasW = canvas_get_width();
+    int canvasH = canvas_get_height();
+    ctx->ui->sizeX = canvasW;
+    ctx->ui->sizeY = canvasH;
+    SDL_SetWindowSize(ctx->ui->window, canvasW, canvasH);
+    printf("x: %d, y:%d\n", ctx->ui->sizeX, ctx->ui->sizeY);
+  }
   if (ctx->frameCount % 50 == 0) {
     int canvasW = canvas_get_width();
     int canvasH = canvas_get_height();
@@ -128,9 +137,11 @@ int main(int argc, char *argv[]) {
 
   struct context ctx;
 
-  // SDL_DisplayMode DM;
-  // SDL_GetCurrentDisplayMode(0, &DM);
+// SDL_DisplayMode DM;
+// SDL_GetCurrentDisplayMode(0, &DM);
 
+// int canvasW = 1200;
+// int canvasH = 800;
 #ifdef __EMSCRIPTEN__
   int canvasW = canvas_get_width();
   int canvasH = canvas_get_height();

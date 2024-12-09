@@ -13,7 +13,7 @@
 # # -O1/2/3 -> optimization
 # gcc obj/*.o -lm -lSDL2 -Wall -Werror -Wextra -O1 -o bin/boids
 # gcc src/*.c -lm -lSDL2 -Wall -Werror -Wextra -O1 -o bin/boids
-gcc src/*.c -lm -lSDL2 -Wall -O1 -o bin/boids
+# gcc src/*.c -lm -lSDL2 -Wall -O1 -o bin/boids
 
 
 
@@ -29,4 +29,4 @@ gcc src/*.c -lm -lSDL2 -Wall -O1 -o bin/boids
 # gcc $OBJ_DIR/*.o -lm -lSDL2 -Wall -Werror -Wextra -O3 -o $BIN_DIR/boids
 
 
-# emcc src/*.c -s WASM=1 -s USE_SDL=2 -s SDL2_IMAGE_FORMATS='["bmp"]' -s USE_SDL_TTF=2 --preload-file resources -O3 -o boids_c.js
+emcc src/*.c -s WASM=1 -s USE_SDL=2 -s SDL2_IMAGE_FORMATS='["bmp"]' -s USE_SDL_TTF=2 --preload-file resources -O3 -o boids_c.js
