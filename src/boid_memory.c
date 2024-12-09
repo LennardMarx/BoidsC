@@ -24,8 +24,8 @@ struct Boid *boid_create(struct UI *ui) {
 
   boid->vision = 50.0f;
 
-  boid->length = 20.0f;
-  boid->width = 40.0f;
+  boid->length = 16.0f;
+  boid->width = 32.0f;
 
   boid->mates = calloc(0, sizeof(struct Boid *));
 
