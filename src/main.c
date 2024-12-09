@@ -151,6 +151,8 @@ int main(int argc, char *argv[]) {
 #endif
 
   ctx.ui = ui_create("Boids", canvasW, canvasH);
+  ctx.ui->sizeX = canvasW;
+  ctx.ui->sizeY = canvasH;
   // ctx.ui = ui_create("Boids", DM.w, DM.h);
   ctx.eventHandler = event_handler_create();
   // SDL_SetWindowResizable(ctx.ui->window, 1);
