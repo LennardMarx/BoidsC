@@ -12,7 +12,8 @@
 # # -SDL2 -> visualisation API
 # # -O1/2/3 -> optimization
 # gcc obj/*.o -lm -lSDL2 -Wall -Werror -Wextra -O1 -o bin/boids
-gcc src/*.c -lm -lSDL2 -Wall -Werror -Wextra -O1 -o bin/boids
+# gcc src/*.c -lm -lSDL2 -Wall -Werror -Wextra -O1 -o bin/boids
+gcc src/*.c -lm -lSDL2 -Wall -O1 -o bin/boids
 
 
 

@@ -135,8 +135,8 @@ int main(int argc, char *argv[]) {
   int canvasW = canvas_get_width();
   int canvasH = canvas_get_height();
 #else
-  int canvasW = 800;
-  int canvasH = 600;
+  int canvasW = 1200;
+  int canvasH = 800;
 #endif
 
   ctx.ui = ui_create("Boids", canvasW, canvasH);
