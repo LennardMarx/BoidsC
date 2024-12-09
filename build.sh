@@ -28,5 +28,5 @@
 # # Link object files to create the final executable
 # gcc $OBJ_DIR/*.o -lm -lSDL2 -Wall -Werror -Wextra -O3 -o $BIN_DIR/boids
 
-
+source ~/Software/emsdk/emsdk_env.sh
 emcc src/*.c -s WASM=1 -s USE_SDL=2 -s SDL2_IMAGE_FORMATS='["bmp"]' -s USE_SDL_TTF=2 --preload-file resources -O3 -o boids_c.js

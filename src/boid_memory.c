@@ -8,6 +8,8 @@ struct Boid *boid_create(struct UI *ui) {
   boid->maxForce = 0.05f;
   boid->maxVel = 4.0f;
 
+  // printf("sizeX: %d, sizeY: %d\n", ui->sizeX, ui->sizeY);
+
   boid->pos[0] = rand() % (ui->sizeX + 1);
   boid->pos[1] = rand() % (ui->sizeY + 1);
 
