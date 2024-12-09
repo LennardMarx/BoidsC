@@ -1,0 +1,3 @@
+[submodule "include/cglm"]
+	path = include/cglm
+	url = git@github.com:LennardMarx/cglm_fork.git
