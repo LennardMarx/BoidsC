@@ -41,22 +41,9 @@ struct context {
 };
 
 static void mainloop(void *arg) {
-  // chdir(SDL_GetBasePath());
   struct context *ctx = (struct context *)(arg);
 
-// printf("frameCount: %d\n", ctx->frameCount);
 #ifdef __EMSCRIPTEN__
-  printf("frameCount: %d\n", ctx->frameCount);
-  printf("x: %d, y:%d\n", ctx->ui->sizeX, ctx->ui->sizeY);
-  // get canvas size on frame 0
-  if (ctx->frameCount == 0) {
-    int canvasW = canvas_get_width();
-    int canvasH = canvas_get_height();
-    ctx->ui->sizeX = canvasW;
-    ctx->ui->sizeY = canvasH;
-    SDL_SetWindowSize(ctx->ui->window, canvasW, canvasH);
-    // printf("x: %d, y:%d\n", ctx->ui->sizeX, ctx->ui->sizeY);
-  }
   if (ctx->frameCount % 50 == 0) {
     int canvasW = canvas_get_width();
     int canvasH = canvas_get_height();
@@ -126,6 +113,8 @@ static void mainloop(void *arg) {
     SDL_Delay(ctx->FRAME_DELAY - ctx->frameTime);
   }
 
+  printf("frameTime: %d\n", ctx->frameTime);
+
   ctx->frameCount++;
 }
 
@@ -139,19 +128,19 @@ int main(int argc, char *argv[]) {
 
   struct context ctx;
 
-// SDL_DisplayMode DM;
-// SDL_GetCurrentDisplayMode(0, &DM);
+  // SDL_DisplayMode DM;
+  // SDL_GetCurrentDisplayMode(0, &DM);
 
-// int canvasW = 1200;
-// int canvasH = 800;
-#ifdef __EMSCRIPTEN__
-  int canvasW = canvas_get_width();
-  int canvasH = canvas_get_height();
-  // printf("x: %d, y:%d\n", canvasW, canvasH);
-#else
   int canvasW = 1200;
   int canvasH = 800;
-#endif
+  // #ifdef __EMSCRIPTEN__
+  //   int canvasW = canvas_get_width();
+  //   int canvasH = canvas_get_height();
+  //   // printf("x: %d, y:%d\n", canvasW, canvasH);
+  // #else
+  //   int canvasW = 1200;
+  //   int canvasH = 800;
+  // #endif
 
   ctx.ui = ui_create("Boids", canvasW, canvasH);
   // ctx.ui->sizeX = canvasW;
@@ -167,7 +156,7 @@ int main(int argc, char *argv[]) {
   ctx.boidCount = 3000;
   ctx.boids = boids_create(ctx.ui, ctx.boidCount);
 
-  ctx.FPS = 60;
+  ctx.FPS = 30;
   ctx.FRAME_DELAY = 1000 / ctx.FPS;
 
   ctx.frameCount = 0;
