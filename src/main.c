@@ -44,7 +44,7 @@ static void mainloop(void *arg) {
   struct context *ctx = (struct context *)(arg);
 
 #ifdef __EMSCRIPTEN__
-  if (ctx->frameCount % 50 == 0) {
+  if (ctx->frameCount % 50 == 0 || ctx->frameCount == 0) {
     int canvasW = canvas_get_width();
     int canvasH = canvas_get_height();
     ctx->ui->sizeX = canvasW;
