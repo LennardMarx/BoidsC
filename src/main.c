@@ -128,19 +128,19 @@ int main(int argc, char *argv[]) {
 
   struct context ctx;
 
-  // SDL_DisplayMode DM;
-  // SDL_GetCurrentDisplayMode(0, &DM);
+// SDL_DisplayMode DM;
+// SDL_GetCurrentDisplayMode(0, &DM);
 
+// int canvasW = 1200;
+// int canvasH = 800;
+#ifdef __EMSCRIPTEN__
+  int canvasW = canvas_get_width();
+  int canvasH = canvas_get_height();
+  // printf("x: %d, y:%d\n", canvasW, canvasH);
+#else
   int canvasW = 1200;
   int canvasH = 800;
-  // #ifdef __EMSCRIPTEN__
-  //   int canvasW = canvas_get_width();
-  //   int canvasH = canvas_get_height();
-  //   // printf("x: %d, y:%d\n", canvasW, canvasH);
-  // #else
-  //   int canvasW = 1200;
-  //   int canvasH = 800;
-  // #endif
+#endif
 
   ctx.ui = ui_create("Boids", canvasW, canvasH);
   // ctx.ui->sizeX = canvasW;
