@@ -113,8 +113,6 @@ static void mainloop(void *arg) {
     SDL_Delay(ctx->FRAME_DELAY - ctx->frameTime);
   }
 
-  printf("frameTime: %d\n", ctx->frameTime);
-
   ctx->frameCount++;
 }
 
